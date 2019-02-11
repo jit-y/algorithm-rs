@@ -1,6 +1,7 @@
 use std::fmt::{Display, Formatter};
 use std::ptr::NonNull;
 
+#[derive(PartialEq)]
 struct SinglyLinkedListNode<T: Display> {
     value: T,
     next: Option<NonNull<SinglyLinkedListNode<T>>>,
@@ -42,7 +43,7 @@ where
         }
     }
 
-    pub fn push(&mut self, val: T) {
+    pub fn prepend(&mut self, val: T) {
         let mut node = SinglyLinkedListNode::new(val);
         node.next = self.head;
 
@@ -57,7 +58,7 @@ where
         }
     }
 
-    pub fn pop(&mut self) -> Option<&T> {
+    pub fn delete_head(&mut self) -> Option<&T> {
         unsafe {
             let head = match self.head {
                 Some(node) => &*node.as_ptr(),
@@ -77,29 +78,63 @@ where
         }
     }
 
-    pub fn add(&mut self, val: T) -> bool {
-        let node = Box::into_raw_non_null(Box::new(SinglyLinkedListNode::new(val)));
+    pub fn append(&mut self, val: T) -> bool {
+        let new_node = Box::into_raw_non_null(Box::new(SinglyLinkedListNode::new(val)));
 
         unsafe {
             match self.head {
                 Some(_head) => {
                     match self.tail {
                         Some(tail) => {
-                            let tail = &mut *tail.as_ptr();
-                            tail.next = Some(node);
+                            (&mut *tail.as_ptr()).next = Some(new_node);
                         }
                         None => return false,
                     };
                 }
                 None => {
-                    self.head = Some(node);
+                    self.head = Some(new_node);
                 }
             }
         }
 
-        self.tail = Some(node);
+        self.tail = Some(new_node);
 
         true
+    }
+
+    pub fn delete_tail(&mut self) -> Option<&T> {
+        unsafe {
+            let tail = self.tail?;
+            let mut head = self.head?;
+
+            if tail == head {
+                self.head = None;
+                self.tail = None;
+
+                return Some(&(&*tail.as_ptr()).value);
+            }
+
+            loop {
+                let current = (&*head.as_ptr()).next;
+                match current {
+                    None => {
+                        break;
+                    }
+                    Some(current) => match (&*current.as_ptr()).next {
+                        Some(_) => {
+                            head = current;
+                        }
+                        None => {
+                            (&mut *head.as_ptr()).next = None;
+                        }
+                    },
+                }
+            }
+
+            self.tail = Some(head);
+
+            Some(&(&*tail.as_ptr()).value)
+        }
     }
 }
 
@@ -108,9 +143,9 @@ mod tests {
     use crate::singly_linked_list::SinglyLinkedList;
 
     #[test]
-    fn test_push() {
+    fn test_prepend() {
         let mut sll = SinglyLinkedList::new();
-        sll.push("foo");
+        sll.prepend("foo");
 
         unsafe {
             // dereference & move out
@@ -120,24 +155,38 @@ mod tests {
     }
 
     #[test]
-    fn test_pop() {
+    fn test_delete_head() {
         let mut sll = SinglyLinkedList::new();
-        sll.push("foo");
+        sll.prepend("foo");
 
-        let val = sll.pop();
+        let val = sll.delete_head();
 
         assert_eq!(val, Some(&"foo"));
-        assert_eq!(sll.pop(), None);
+        assert_eq!(sll.delete_head(), None);
     }
 
     #[test]
-    fn test_add() {
+    fn test_append() {
         let mut sll = SinglyLinkedList::new();
-        assert_eq!(sll.add("foo"), true);
+        assert_eq!(sll.append("foo"), true);
+        assert_eq!(sll.append("bar"), true);
 
         unsafe {
             let node = &*sll.tail.expect("error").as_ptr();
-            assert_eq!(node.value, "foo");
+            assert_eq!(node.value, "bar");
+        }
+    }
+
+    #[test]
+    fn test_delete_tail() {
+        let mut sll = SinglyLinkedList::new();
+        sll.append("foo");
+        sll.append("bar");
+        sll.append("baz");
+
+        assert_eq!(sll.delete_tail(), Some(&"baz"));
+        unsafe {
+            assert_eq!((&*sll.tail.expect("error").as_ptr()).value, "bar");
         }
     }
 }
