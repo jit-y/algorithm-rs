@@ -2,9 +2,9 @@ use std::fmt::{Display, Formatter};
 use std::ptr::NonNull;
 
 #[derive(PartialEq)]
-struct SinglyLinkedListNode<T: Display> {
-    value: T,
-    next: Option<NonNull<SinglyLinkedListNode<T>>>,
+pub struct SinglyLinkedListNode<T: Display> {
+    pub value: T,
+    pub next: Option<NonNull<SinglyLinkedListNode<T>>>,
 }
 
 impl<T> Display for SinglyLinkedListNode<T>
@@ -28,9 +28,9 @@ where
     }
 }
 
-struct SinglyLinkedList<T: Display> {
-    head: Option<NonNull<SinglyLinkedListNode<T>>>,
-    tail: Option<NonNull<SinglyLinkedListNode<T>>>,
+pub struct SinglyLinkedList<T: Display> {
+    pub head: Option<NonNull<SinglyLinkedListNode<T>>>,
+    pub tail: Option<NonNull<SinglyLinkedListNode<T>>>,
 }
 impl<T> SinglyLinkedList<T>
 where
@@ -78,7 +78,7 @@ where
         }
     }
 
-    pub fn append(&mut self, val: T) -> bool {
+    pub fn append(&mut self, val: T) -> Option<&T> {
         let new_node = Box::into_raw_non_null(Box::new(SinglyLinkedListNode::new(val)));
 
         unsafe {
@@ -88,18 +88,17 @@ where
                         Some(tail) => {
                             (&mut *tail.as_ptr()).next = Some(new_node);
                         }
-                        None => return false,
+                        None => return None,
                     };
                 }
                 None => {
                     self.head = Some(new_node);
                 }
             }
+            self.tail = Some(new_node);
+
+            Some(&(&*new_node.as_ptr()).value)
         }
-
-        self.tail = Some(new_node);
-
-        true
     }
 
     pub fn delete_tail(&mut self) -> Option<&T> {
@@ -168,8 +167,8 @@ mod tests {
     #[test]
     fn test_append() {
         let mut sll = SinglyLinkedList::new();
-        assert_eq!(sll.append("foo"), true);
-        assert_eq!(sll.append("bar"), true);
+        assert_eq!(sll.append("foo"), Some(&"foo"));
+        assert_eq!(sll.append("bar"), Some(&"bar"));
 
         unsafe {
             let node = &*sll.tail.expect("error").as_ptr();
