@@ -1,13 +1,13 @@
 use super::singly_linked_list::SinglyLinkedList;
 use std::fmt::Display;
 
-pub struct Queue<T: Display> {
+pub struct Queue<T: Display + Copy + Clone> {
     pub linked_list: SinglyLinkedList<T>,
 }
 
 impl<T> Queue<T>
 where
-    T: Display,
+    T: Display + Copy + Clone,
 {
     fn new() -> Self {
         Queue {
@@ -23,11 +23,11 @@ where
         false
     }
 
-    pub fn enqueue(&mut self, value: T) -> Option<&T> {
+    pub fn enqueue(&mut self, value: T) -> bool {
         self.linked_list.append(value)
     }
 
-    pub fn dequeue(&mut self) -> Option<&T> {
+    pub fn dequeue(&mut self) -> Option<T> {
         self.linked_list.delete_head()
     }
 }
@@ -47,8 +47,8 @@ mod tests {
     #[test]
     fn test_enqueue() {
         let mut q = Queue::new();
-        assert_eq!(q.enqueue("foo"), Some(&"foo"));
-        assert_eq!(q.enqueue("bar"), Some(&"bar"));
+        assert_eq!(q.enqueue("foo"), true);
+        assert_eq!(q.enqueue("bar"), true);
     }
 
     #[test]
@@ -56,8 +56,8 @@ mod tests {
         let mut q = Queue::new();
         q.enqueue("foo");
         q.enqueue("bar");
-        assert_eq!(q.dequeue(), Some(&"foo"));
-        assert_eq!(q.dequeue(), Some(&"bar"));
+        assert_eq!(q.dequeue(), Some("foo"));
+        assert_eq!(q.dequeue(), Some("bar"));
         assert_eq!(q.dequeue(), None);
     }
 }

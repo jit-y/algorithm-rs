@@ -9,7 +9,7 @@ pub struct SinglyLinkedListNode<T: Display> {
 
 impl<T> Display for SinglyLinkedListNode<T>
 where
-    T: Display,
+    T: Display + Copy + Clone,
 {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         write!(f, "{}", self.value)
@@ -18,7 +18,7 @@ where
 
 impl<T> SinglyLinkedListNode<T>
 where
-    T: Display,
+    T: Display + Copy + Clone,
 {
     pub fn new(value: T) -> Self {
         Self {
@@ -34,7 +34,7 @@ pub struct SinglyLinkedList<T: Display> {
 }
 impl<T> SinglyLinkedList<T>
 where
-    T: Display,
+    T: Display + Copy + Clone,
 {
     pub fn new() -> Self {
         Self {
@@ -43,7 +43,7 @@ where
         }
     }
 
-    pub fn prepend(&mut self, val: T) {
+    pub fn prepend(&mut self, val: T) -> bool {
         let mut node = SinglyLinkedListNode::new(val);
         node.next = self.head;
 
@@ -56,9 +56,11 @@ where
                 self.tail = node;
             }
         }
+
+        true
     }
 
-    pub fn delete_head(&mut self) -> Option<&T> {
+    pub fn delete_head(&mut self) -> Option<T> {
         unsafe {
             let head = match self.head {
                 Some(node) => &*node.as_ptr(),
@@ -74,21 +76,18 @@ where
                 }
             }
 
-            Some(&head.value)
+            Some(head.value.clone())
         }
     }
 
-    pub fn append(&mut self, val: T) -> Option<&T> {
+    pub fn append(&mut self, val: T) -> bool {
         let new_node = Box::into_raw_non_null(Box::new(SinglyLinkedListNode::new(val)));
 
         unsafe {
             match self.head {
                 Some(_head) => {
-                    match self.tail {
-                        Some(tail) => {
-                            (&mut *tail.as_ptr()).next = Some(new_node);
-                        }
-                        None => return None,
+                    if let Some(tail) = self.tail {
+                        (&mut *tail.as_ptr()).next = Some(new_node)
                     };
                 }
                 None => {
@@ -96,12 +95,12 @@ where
                 }
             }
             self.tail = Some(new_node);
-
-            Some(&(&*new_node.as_ptr()).value)
         }
+
+        true
     }
 
-    pub fn delete_tail(&mut self) -> Option<&T> {
+    pub fn delete_tail(&mut self) -> Option<T> {
         unsafe {
             let tail = self.tail?;
             let mut head = self.head?;
@@ -110,7 +109,7 @@ where
                 self.head = None;
                 self.tail = None;
 
-                return Some(&(&*tail.as_ptr()).value);
+                return Some((&*tail.as_ptr()).value.clone());
             }
 
             loop {
@@ -132,7 +131,7 @@ where
 
             self.tail = Some(head);
 
-            Some(&(&*tail.as_ptr()).value)
+            Some((&*tail.as_ptr()).value.clone())
         }
     }
 }
@@ -160,15 +159,15 @@ mod tests {
 
         let val = sll.delete_head();
 
-        assert_eq!(val, Some(&"foo"));
+        assert_eq!(val, Some("foo"));
         assert_eq!(sll.delete_head(), None);
     }
 
     #[test]
     fn test_append() {
         let mut sll = SinglyLinkedList::new();
-        assert_eq!(sll.append("foo"), Some(&"foo"));
-        assert_eq!(sll.append("bar"), Some(&"bar"));
+        assert_eq!(sll.append("foo"), true);
+        assert_eq!(sll.append("bar"), true);
 
         unsafe {
             let node = &*sll.tail.expect("error").as_ptr();
@@ -183,7 +182,7 @@ mod tests {
         sll.append("bar");
         sll.append("baz");
 
-        assert_eq!(sll.delete_tail(), Some(&"baz"));
+        assert_eq!(sll.delete_tail(), Some("baz"));
         unsafe {
             assert_eq!((&*sll.tail.expect("error").as_ptr()).value, "bar");
         }
