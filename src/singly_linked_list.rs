@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter};
 use std::ptr::NonNull;
 
 #[derive(PartialEq)]
-pub struct SinglyLinkedListNode<T: Display> {
+pub struct SinglyLinkedListNode<T: Display + Copy + Clone> {
     pub value: T,
     pub next: Option<NonNull<SinglyLinkedListNode<T>>>,
 }
@@ -28,7 +28,7 @@ where
     }
 }
 
-pub struct SinglyLinkedList<T: Display> {
+pub struct SinglyLinkedList<T: Display + Copy + Clone> {
     pub head: Option<NonNull<SinglyLinkedListNode<T>>>,
     pub tail: Option<NonNull<SinglyLinkedListNode<T>>>,
 }

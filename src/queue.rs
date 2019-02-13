@@ -9,7 +9,7 @@ impl<T> Queue<T>
 where
     T: Display + Copy + Clone,
 {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Queue {
             linked_list: SinglyLinkedList::new(),
         }
@@ -23,12 +23,19 @@ where
         false
     }
 
-    pub fn enqueue(&mut self, value: T) -> bool {
-        self.linked_list.append(value)
+    pub fn enqueue(&mut self, value: T) {
+        self.linked_list.append(value);
     }
 
     pub fn dequeue(&mut self) -> Option<T> {
         self.linked_list.delete_head()
+    }
+
+    pub fn peek(&self) -> Option<T> {
+        match self.linked_list.head {
+            Some(node) => unsafe { Some((&*node.as_ptr()).value.clone()) },
+            None => None,
+        }
     }
 }
 
@@ -47,8 +54,11 @@ mod tests {
     #[test]
     fn test_enqueue() {
         let mut q = Queue::new();
-        assert_eq!(q.enqueue("foo"), true);
-        assert_eq!(q.enqueue("bar"), true);
+        assert_eq!(q.peek(), None);
+        q.enqueue("foo");
+        assert_eq!(q.peek(), Some("foo"));
+        q.enqueue("bar");
+        assert_eq!(q.peek(), Some("foo"));
     }
 
     #[test]
