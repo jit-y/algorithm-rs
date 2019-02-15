@@ -52,4 +52,17 @@ mod tests {
         s.push("bar");
         assert_eq!(Some("bar"), s.peek());
     }
+
+    #[test]
+    fn test_pop() {
+        let mut s = Stack::new();
+
+        s.push("foo");
+        s.push("bar");
+        assert_eq!(Some("bar"), s.pop());
+        assert_eq!(false, s.is_empty());
+        assert_eq!(Some("foo"), s.pop());
+        assert_eq!(true, s.is_empty());
+        assert_eq!(None, s.pop());
+    }
 }
