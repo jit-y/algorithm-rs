@@ -12,6 +12,17 @@ pub fn clear_bit(num: i32, position: i32) -> i32 {
     num & mask
 }
 
+pub fn update_bit(num: i32, position: i32, bit_value: bool) -> i32 {
+    let normalized_bit_value: i32 = match bit_value {
+        true => 1,
+        false => 0,
+    };
+
+    let mask = !(1 << position);
+
+    (num & mask) | (normalized_bit_value << position)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::bit;
@@ -40,5 +51,13 @@ mod tests {
         assert_eq!(bit::clear_bit(10, 2), 10);
         assert_eq!(bit::clear_bit(10, 3), 2);
         assert_eq!(bit::clear_bit(10, 4), 10);
+    }
+
+    #[test]
+    fn test_update_bit() {
+        assert_eq!(bit::update_bit(10, 1, true), 10);
+        assert_eq!(bit::update_bit(10, 1, false), 8);
+        assert_eq!(bit::update_bit(10, 3, true), 10);
+        assert_eq!(bit::update_bit(10, 3, false), 2);
     }
 }
