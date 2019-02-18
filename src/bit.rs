@@ -28,36 +28,36 @@ mod tests {
     use crate::bit;
     #[test]
     fn test_get_bit() {
-        assert_eq!(bit::get_bit(10, 0), 0);
-        assert_eq!(bit::get_bit(10, 1), 1);
-        assert_eq!(bit::get_bit(10, 2), 0);
-        assert_eq!(bit::get_bit(10, 3), 1);
+        assert_eq!(0, bit::get_bit(10, 0));
+        assert_eq!(1, bit::get_bit(10, 1));
+        assert_eq!(0, bit::get_bit(10, 2));
+        assert_eq!(1, bit::get_bit(10, 3));
     }
 
     #[test]
     fn test_set_bit() {
-        assert_eq!(bit::set_bit(10, 0), 11);
-        assert_eq!(bit::set_bit(10, 1), 10);
-        assert_eq!(bit::set_bit(10, 2), 14);
-        assert_eq!(bit::set_bit(10, 3), 10);
-        assert_eq!(bit::set_bit(10, 4), 26);
-        assert_eq!(bit::set_bit(10, 5), 42);
+        assert_eq!(11, bit::set_bit(10, 0));
+        assert_eq!(10, bit::set_bit(10, 1));
+        assert_eq!(14, bit::set_bit(10, 2));
+        assert_eq!(10, bit::set_bit(10, 3));
+        assert_eq!(26, bit::set_bit(10, 4));
+        assert_eq!(42, bit::set_bit(10, 5));
     }
 
     #[test]
     fn test_clear_bit() {
-        assert_eq!(bit::clear_bit(10, 0), 10);
-        assert_eq!(bit::clear_bit(10, 1), 8);
-        assert_eq!(bit::clear_bit(10, 2), 10);
-        assert_eq!(bit::clear_bit(10, 3), 2);
-        assert_eq!(bit::clear_bit(10, 4), 10);
+        assert_eq!(10, bit::clear_bit(10, 0));
+        assert_eq!(8, bit::clear_bit(10, 1));
+        assert_eq!(10, bit::clear_bit(10, 2));
+        assert_eq!(2, bit::clear_bit(10, 3));
+        assert_eq!(10, bit::clear_bit(10, 4));
     }
 
     #[test]
     fn test_update_bit() {
-        assert_eq!(bit::update_bit(10, 1, true), 10);
-        assert_eq!(bit::update_bit(10, 1, false), 8);
-        assert_eq!(bit::update_bit(10, 3, true), 10);
-        assert_eq!(bit::update_bit(10, 3, false), 2);
+        assert_eq!(10, bit::update_bit(10, 1, true));
+        assert_eq!(8, bit::update_bit(10, 1, false));
+        assert_eq!(10, bit::update_bit(10, 3, true));
+        assert_eq!(2, bit::update_bit(10, 3, false));
     }
 }
