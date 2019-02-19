@@ -23,6 +23,14 @@ pub fn update_bit(num: i32, position: i32, bit_value: bool) -> i32 {
     (num & mask) | (normalized_bit_value << position)
 }
 
+pub fn is_even(num: i32) -> bool {
+    (num & 1) == 0
+}
+
+pub fn is_odd(num: i32) -> bool {
+    !is_even(num)
+}
+
 #[cfg(test)]
 mod tests {
     use crate::bit;
@@ -59,5 +67,11 @@ mod tests {
         assert_eq!(8, bit::update_bit(10, 1, false));
         assert_eq!(10, bit::update_bit(10, 3, true));
         assert_eq!(2, bit::update_bit(10, 3, false));
+    }
+
+    #[test]
+    fn test_is_even() {
+        assert_eq!(true, bit::is_even(10));
+        assert_eq!(false, bit::is_even(9));
     }
 }
