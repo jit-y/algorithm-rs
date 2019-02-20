@@ -31,6 +31,13 @@ pub fn is_odd(num: i32) -> bool {
     !is_even(num)
 }
 
+pub fn is_positive(num: i32) -> bool {
+    match num {
+        0 => false,
+        _ => (num >> 31 & 1) == 0,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::bit;
@@ -73,5 +80,12 @@ mod tests {
     fn test_is_even() {
         assert_eq!(true, bit::is_even(10));
         assert_eq!(false, bit::is_even(9));
+    }
+
+    #[test]
+    fn test_is_positive() {
+        assert_eq!(true, bit::is_positive(10));
+        assert_eq!(false, bit::is_positive(0));
+        assert_eq!(false, bit::is_positive(-1));
     }
 }
