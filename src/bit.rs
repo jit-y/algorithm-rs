@@ -38,6 +38,14 @@ pub fn is_positive(num: i32) -> bool {
     }
 }
 
+pub fn multiply_by_two(num: i32) -> i32 {
+    num << 1
+}
+
+pub fn devide_by_two(num: i32) -> i32 {
+    num >> 1
+}
+
 #[cfg(test)]
 mod tests {
     use crate::bit;
@@ -87,5 +95,17 @@ mod tests {
         assert_eq!(true, bit::is_positive(10));
         assert_eq!(false, bit::is_positive(0));
         assert_eq!(false, bit::is_positive(-1));
+    }
+
+    #[test]
+    fn test_multiply_by_two() {
+        assert_eq!(10, bit::multiply_by_two(5));
+        assert_eq!(200, bit::multiply_by_two(100));
+    }
+
+    #[test]
+    fn test_devide_by_two() {
+        assert_eq!(2, bit::devide_by_two(5));
+        assert_eq!(1010, bit::devide_by_two(2020));
     }
 }
