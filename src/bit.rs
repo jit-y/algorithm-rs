@@ -46,6 +46,10 @@ pub fn devide_by_two(num: i32) -> i32 {
     num >> 1
 }
 
+pub fn switch_sign(num: i32) -> i32 {
+    !num + 1
+}
+
 #[cfg(test)]
 mod tests {
     use crate::bit;
@@ -107,5 +111,11 @@ mod tests {
     fn test_devide_by_two() {
         assert_eq!(2, bit::devide_by_two(5));
         assert_eq!(1010, bit::devide_by_two(2020));
+    }
+
+    #[test]
+    fn test_switch_sign() {
+        assert_eq!(-15, bit::switch_sign(15));
+        assert_eq!(15, bit::switch_sign(-15));
     }
 }
