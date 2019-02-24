@@ -9,7 +9,7 @@ pub struct SinglyLinkedListNode<T: Display + Copy + Clone> {
 
 impl<T> Display for SinglyLinkedListNode<T>
 where
-    T: Display + Copy + Clone,
+    T: Display + Copy + Clone + PartialEq,
 {
     fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
         write!(f, "{}", self.value)
@@ -28,13 +28,13 @@ where
     }
 }
 
-pub struct SinglyLinkedList<T: Display + Copy + Clone> {
+pub struct SinglyLinkedList<T: Display + Copy + Clone + PartialEq> {
     pub head: Option<NonNull<SinglyLinkedListNode<T>>>,
     pub tail: Option<NonNull<SinglyLinkedListNode<T>>>,
 }
 impl<T> SinglyLinkedList<T>
 where
-    T: Display + Copy + Clone,
+    T: Display + Copy + Clone + PartialEq,
 {
     pub fn new() -> Self {
         Self {
@@ -134,6 +134,29 @@ where
             Some((&*tail.as_ptr()).value.clone())
         }
     }
+
+    pub fn find(&self, val: T) -> Option<T> {
+        let mut current = match self.head {
+            None => {
+                return None;
+            }
+            Some(current) => current,
+        };
+
+        loop {
+            let current_node = unsafe { (&*current.as_ptr()) };
+            let current_value = current_node.value.clone();
+
+            if current_value == val {
+                return Some(current_value);
+            }
+
+            match current_node.next {
+                None => return None,
+                Some(node) => current = node,
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -186,5 +209,16 @@ mod tests {
         unsafe {
             assert_eq!((&*sll.tail.expect("error").as_ptr()).value, "bar");
         }
+    }
+
+    #[test]
+    fn test_find() {
+        let mut sll = SinglyLinkedList::new();
+        sll.append("foo");
+        sll.append("bar");
+        sll.append("baz");
+
+        assert_eq!(Some("bar"), sll.find("bar"));
+        assert_eq!(None, sll.find("aaa"));
     }
 }

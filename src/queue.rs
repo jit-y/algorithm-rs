@@ -1,13 +1,13 @@
 use super::singly_linked_list::SinglyLinkedList;
 use std::fmt::Display;
 
-pub struct Queue<T: Display + Copy + Clone> {
+pub struct Queue<T: Display + Copy + Clone + PartialEq> {
     pub linked_list: SinglyLinkedList<T>,
 }
 
 impl<T> Queue<T>
 where
-    T: Display + Copy + Clone,
+    T: Display + Copy + Clone + PartialEq,
 {
     pub fn new() -> Self {
         Queue {
