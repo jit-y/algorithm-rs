@@ -2,6 +2,7 @@
 
 pub mod bit;
 pub mod factorial;
+pub mod fibonacci;
 pub mod queue;
 pub mod singly_linked_list;
 pub mod stack;
