@@ -22,7 +22,7 @@ where
 {
     pub fn new(value: T) -> Self {
         Self {
-            value: value,
+            value,
             next: None,
         }
     }
@@ -76,26 +76,24 @@ where
                 }
             }
 
-            Some(head.value.clone())
+            Some(head.value)
         }
     }
 
     pub fn append(&mut self, val: T) -> bool {
         let new_node = Box::into_raw_non_null(Box::new(SinglyLinkedListNode::new(val)));
 
-        unsafe {
-            match self.head {
-                Some(_head) => {
-                    if let Some(tail) = self.tail {
-                        (&mut *tail.as_ptr()).next = Some(new_node)
-                    };
-                }
-                None => {
-                    self.head = Some(new_node);
-                }
+        match self.head {
+            Some(_head) => {
+                if let Some(tail) = self.tail {
+                    unsafe { (&mut *tail.as_ptr()).next = Some(new_node) }
+                };
             }
-            self.tail = Some(new_node);
+            None => {
+                self.head = Some(new_node);
+            }
         }
+        self.tail = Some(new_node);
 
         true
     }
@@ -109,16 +107,16 @@ where
                 self.head = None;
                 self.tail = None;
 
-                return Some((&*tail.as_ptr()).value.clone());
+                return Some((*tail.as_ptr()).value);
             }
 
             loop {
-                let current = (&*head.as_ptr()).next;
+                let current = (*head.as_ptr()).next;
                 match current {
                     None => {
                         break;
                     }
-                    Some(current) => match (&*current.as_ptr()).next {
+                    Some(current) => match (*current.as_ptr()).next {
                         Some(_) => {
                             head = current;
                         }
@@ -131,7 +129,7 @@ where
 
             self.tail = Some(head);
 
-            Some((&*tail.as_ptr()).value.clone())
+            Some((*tail.as_ptr()).value)
         }
     }
 
@@ -145,7 +143,7 @@ where
 
         loop {
             let current_node = unsafe { (&*current.as_ptr()) };
-            let current_value = current_node.value.clone();
+            let current_value = current_node.value;
 
             if current_value == val {
                 return Some(current_value);
@@ -169,7 +167,6 @@ mod tests {
         sll.prepend("foo");
 
         unsafe {
-            // dereference & move out
             let node = &*sll.head.expect("error").as_ptr();
             assert_eq!(node.value, "foo");
         }
