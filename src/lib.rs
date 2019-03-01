@@ -3,6 +3,7 @@
 pub mod bit;
 pub mod factorial;
 pub mod fibonacci;
+pub mod gcd;
 pub mod prime;
 pub mod queue;
 pub mod singly_linked_list;
