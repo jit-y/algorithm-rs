@@ -7,6 +7,7 @@ pub mod gcd;
 pub mod lcm;
 pub mod prime;
 pub mod queue;
+pub mod sieve_of_eratosthenes;
 pub mod singly_linked_list;
 pub mod stack;
 
