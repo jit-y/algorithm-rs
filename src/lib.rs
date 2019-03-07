@@ -4,6 +4,7 @@ pub mod bit;
 pub mod factorial;
 pub mod fibonacci;
 pub mod gcd;
+pub mod is_power_of_two;
 pub mod lcm;
 pub mod prime;
 pub mod queue;
