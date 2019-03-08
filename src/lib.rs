@@ -6,6 +6,7 @@ pub mod fibonacci;
 pub mod gcd;
 pub mod is_power_of_two;
 pub mod lcm;
+pub mod pascal_triangle;
 pub mod prime;
 pub mod queue;
 pub mod sieve_of_eratosthenes;
